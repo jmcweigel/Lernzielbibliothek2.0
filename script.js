@@ -94,12 +94,13 @@ function render(){
   const disciplines = Object.keys(tree).sort((a,b)=>a.localeCompare(b,"de"));
 
   for (const d of disciplines){
-    const card = document.createElement("section");
+    const card = document.createElement("details");
     card.className = "card";
+    card.open = false; 
 
     const color = disciplineColor(d);
 
-    const head = document.createElement("div");
+    const head = document.createElement("summary");
     head.className = "cardHead";
     head.style.background = `linear-gradient(135deg, ${color.bg1}, ${color.bg2})`;
 
