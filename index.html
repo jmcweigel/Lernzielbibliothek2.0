@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lernziel-Bibliothek</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <div class="brand">
+        <div class="logo">LZ</div>
+        <div>
+          <div class="title">Lernziel-Bibliothek</div>
+          <div class="subtitle">Disziplin → Vorlesung → Subgruppe (als Titel) → Lernziel</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <input id="search" class="search" placeholder="Suche (Disziplin, Vorlesung, Subgruppe, Lernziel) …" />
+        <label class="chip">
+          <input id="hideDone" type="checkbox" />
+          <span>Erledigte ausblenden</span>
+        </label>
+        <button id="resetDone" class="btn" type="button">Erledigt zurücksetzen</button>
+      </div>
+
+      <div id="status" class="status"></div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <div id="grid" class="grid"></div>
+  </main>
+
+  <script src="script.js?v=1"></script>
+</body>
+</html>
