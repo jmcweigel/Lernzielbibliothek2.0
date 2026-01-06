@@ -1,0 +1,258 @@
+const DATA_URL = "https://opensheet.elk.sh/1mJTfT3OJfCzYZCVscKaXxnzhCy3eEzv97GxOlkcGVLg/WebExport";
+
+// Spaltennamen aus WebExport:
+const COL_DISZIPLIN = "Disziplin";
+const COL_VORLESUNG = "Vorlesung";
+const COL_SUBGRUPPE = "Subgruppe";
+const COL_LERNZIEL  = "Lernziel";
+
+const grid = document.getElementById("grid");
+const statusEl = document.getElementById("status");
+const searchEl = document.getElementById("search");
+const hideDoneEl = document.getElementById("hideDone");
+const resetDoneBtn = document.getElementById("resetDone");
+
+const STORAGE_KEY = "lernziele_done_v1";
+
+let raw = [];
+let doneMap = loadDoneMap();
+
+init();
+
+async function init(){
+  const res = await fetch(DATA_URL);
+  if (!res.ok) {
+    statusEl.textContent = `Fehler beim Laden der Daten (HTTP ${res.status}). Prüfe DATA_URL/Freigabe/Tabname.`;
+    return;
+  }
+
+  raw = await res.json();
+
+  // Defensive: leere Felder zu String machen
+  raw = raw
+    .map(r => ({
+      Disziplin: String(r[COL_DISZIPLIN] ?? "").trim(),
+      Vorlesung: String(r[COL_VORLESUNG] ?? "").trim(),
+      Subgruppe: String(r[COL_SUBGRUPPE] ?? "").trim(),
+      Lernziel:  String(r[COL_LERNZIEL]  ?? "").trim(),
+    }))
+    .filter(r => r.Lernziel.length > 0);
+
+  // UI Events
+  searchEl.addEventListener("input", render);
+  hideDoneEl.addEventListener("change", render);
+
+  resetDoneBtn.addEventListener("click", () => {
+    doneMap = {};
+    saveDoneMap(doneMap);
+    render();
+  });
+
+  render();
+}
+
+function render(){
+  const q = searchEl.value.trim().toLowerCase();
+  const hideDone = hideDoneEl.checked;
+
+  // Filter
+  const rows = raw.filter(r => {
+    const key = makeKey(r);
+    const isDone = !!doneMap[key];
+
+    if (hideDone && isDone) return false;
+    if (!q) return true;
+
+    return (
+      r.Disziplin.toLowerCase().includes(q) ||
+      r.Vorlesung.toLowerCase().includes(q) ||
+      r.Subgruppe.toLowerCase().includes(q) ||
+      r.Lernziel.toLowerCase().includes(q)
+    );
+  });
+
+  // Grouping: Disziplin -> Vorlesung -> (Subgruppe als Abschnittstitel) -> Items
+  const tree = {};
+  for (const r of rows){
+    const d = r.Disziplin || "Ohne Disziplin";
+    const v = r.Vorlesung || "Ohne Vorlesung";
+    const s = r.Subgruppe || "Ohne Subgruppe";
+
+    tree[d] ??= {};
+    tree[d][v] ??= {};
+    tree[d][v][s] ??= [];
+    tree[d][v][s].push(r);
+  }
+
+  // Stats
+  const totalShown = rows.length;
+  const totalAll = raw.length;
+  statusEl.textContent = `Angezeigt: ${totalShown} / ${totalAll} Lernziele · Erledigt (dieser Browser): ${countDone(raw)} · Speicherung pro Nutzer/Browser`;
+
+  // Render cards (Pinterest grid)
+  grid.innerHTML = "";
+  const disciplines = Object.keys(tree).sort((a,b)=>a.localeCompare(b,"de"));
+
+  for (const d of disciplines){
+    const card = document.createElement("section");
+    card.className = "card";
+
+    const color = disciplineColor(d);
+
+    const head = document.createElement("div");
+    head.className = "cardHead";
+    head.style.background = `linear-gradient(135deg, ${color.bg1}, ${color.bg2})`;
+
+    const titleWrap = document.createElement("div");
+    const h = document.createElement("h2");
+    h.className = "disziplin";
+    h.textContent = d;
+    titleWrap.appendChild(h);
+
+    const meta = document.createElement("div");
+    meta.className = "smallmeta";
+    const vCount = Object.keys(tree[d]).length;
+    meta.textContent = `${vCount} Vorlesung(en)`;
+    titleWrap.appendChild(meta);
+
+    const badge = document.createElement("div");
+    badge.className = "badge";
+    badge.textContent = `${countLeaf(tree[d])} Lernziele`;
+
+    head.appendChild(titleWrap);
+    head.appendChild(badge);
+
+    const body = document.createElement("div");
+    body.className = "cardBody";
+
+    // Vorlesungen als collapsible details
+    const lectures = Object.keys(tree[d]).sort((a,b)=>a.localeCompare(b,"de"));
+    for (const v of lectures){
+      const det = document.createElement("details");
+      det.open = true;
+
+      const sum = document.createElement("summary");
+      sum.textContent = v;
+      det.appendChild(sum);
+
+      // Subgruppen als fette Titel (KEINE extra Details)
+      const subgroups = Object.keys(tree[d][v]).sort((a,b)=>a.localeCompare(b,"de"));
+      for (const s of subgroups){
+        const sTitle = document.createElement("div");
+        sTitle.className = "subgroupTitle";
+        sTitle.textContent = s;
+        det.appendChild(sTitle);
+
+        const ul = document.createElement("ul");
+        ul.className = "list";
+
+        for (const r of tree[d][v][s]){
+          const key = makeKey(r);
+          const isDone = !!doneMap[key];
+
+          const li = document.createElement("li");
+          li.className = "item" + (isDone ? " done" : "");
+
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.checked = isDone;
+
+          cb.addEventListener("change", () => {
+            doneMap[key] = cb.checked;
+            if (!cb.checked) delete doneMap[key];
+            saveDoneMap(doneMap);
+            // nur minimale UI-Änderung
+            li.classList.toggle("done", cb.checked);
+            if (hideDoneEl.checked && cb.checked) render();
+            statusEl.textContent = `Angezeigt: ${rows.length} / ${raw.length} Lernziele · Erledigt (dieser Browser): ${countDone(raw)} · Speicherung pro Nutzer/Browser`;
+          });
+
+          const txt = document.createElement("div");
+          txt.className = "lzText";
+          txt.textContent = r.Lernziel;
+
+          li.appendChild(cb);
+          li.appendChild(txt);
+          ul.appendChild(li);
+        }
+
+        det.appendChild(ul);
+      }
+
+      body.appendChild(det);
+    }
+
+    card.appendChild(head);
+    card.appendChild(body);
+    grid.appendChild(card);
+  }
+}
+
+/* ---------- helpers ---------- */
+
+function makeKey(r){
+  // Stabile Key-Erzeugung pro Lernziel. (Wenn Texte später geändert werden, ändert sich der Key.)
+  return stableHash(`${r.Disziplin}||${r.Vorlesung}||${r.Subgruppe}||${r.Lernziel}`);
+}
+
+function loadDoneMap(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+  catch { return {}; }
+}
+
+function saveDoneMap(map){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+}
+
+function countDone(allRows){
+  let n = 0;
+  for (const r of allRows){
+    if (doneMap[makeKey(r)]) n++;
+  }
+  return n;
+}
+
+function countLeaf(vorlesungenObj){
+  let total = 0;
+  for (const subObj of Object.values(vorlesungenObj)){
+    for (const items of Object.values(subObj)){
+      total += items.length;
+    }
+  }
+  return total;
+}
+
+// Pastellige Disziplinfarben (deterministisch)
+function disciplineColor(name){
+  const palette = [
+    { bg1:"#fde68a", bg2:"#fbcfe8" },
+    { bg1:"#bfdbfe", bg2:"#ddd6fe" },
+    { bg1:"#bbf7d0", bg2:"#bae6fd" },
+    { bg1:"#fecaca", bg2:"#fed7aa" },
+    { bg1:"#e9d5ff", bg2:"#c7d2fe" },
+    { bg1:"#99f6e4", bg2:"#bfdbfe" },
+    { bg1:"#fca5a5", bg2:"#fde68a" },
+    { bg1:"#d9f99d", bg2:"#a7f3d0" },
+  ];
+  const idx = stableHashInt(name) % palette.length;
+  return palette[idx];
+}
+
+// Kleine stabile Hashes (ohne libs)
+function stableHash(str){
+  // djb2-like
+  let h = 5381;
+  for (let i=0; i<str.length; i++){
+    h = ((h << 5) + h) + str.charCodeAt(i);
+    h = h >>> 0;
+  }
+  return "k" + h.toString(16);
+}
+function stableHashInt(str){
+  let h = 2166136261;
+  for (let i=0; i<str.length; i++){
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  return h;
+}
