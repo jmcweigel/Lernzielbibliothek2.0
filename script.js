@@ -130,7 +130,7 @@ function render(){
     const lectures = Object.keys(tree[d]).sort((a,b)=>a.localeCompare(b,"de"));
     for (const v of lectures){
       const det = document.createElement("details");
-      det.open = true;
+      det.open = false;
 
       const sum = document.createElement("summary");
       sum.textContent = v;
