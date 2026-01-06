@@ -246,3 +246,28 @@ details:not([open]) summary::after{ content:"▸"; }
   margin-left: auto;
   margin-right: auto;
 }
+
+/* Disziplin-Card als einklappbares Details */
+.card{
+  display:block;
+}
+
+.card > summary{
+  cursor: pointer;
+  list-style: none;
+}
+
+.card > summary::-webkit-details-marker{
+  display:none;
+}
+
+/* Pfeil rechts (optional, elegant) */
+.card > summary::after{
+  content:"▾";
+  float:right;
+  color: rgba(17,24,39,.55);
+  font-weight:700;
+}
+.card:not([open]) > summary::after{
+  content:"▸";
+}
