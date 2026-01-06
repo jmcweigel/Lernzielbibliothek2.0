@@ -216,3 +216,33 @@ details:not([open]) summary::after{ content:"▸"; }
   color: var(--muted);
   margin-top: 2px;
 }
+
+.stack{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 14px;
+}
+
+.card{
+  width: 100%;
+}
+
+/* Optimale Lesebreite für Inhalte */
+.cardBody{
+  max-width: 920px;          /* angenehme Textbreite */
+  margin: 0 auto;            /* zentriert im Card */
+}
+
+/* Lernziel-Text noch besser lesbar */
+.lzText{
+  max-width: 780px;          /* verhindert zu lange Zeilen */
+  line-height: 1.6;          /* ruhiger Textfluss */
+}
+
+/* Subgruppen-Titel klar abgesetzt */
+.subgroupTitle{
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
