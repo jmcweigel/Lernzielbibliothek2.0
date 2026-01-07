@@ -1,6 +1,6 @@
 const DATA_URL = "https://opensheet.elk.sh/1mJTfT3OJfCzYZCVscKaXxnzhCy3eEzv97GxOlkcGVLg/WebExport";
 
-// Spaltennamen aus WebExport:
+// Spaltennamn aus WebExport:
 const COL_DISZIPLIN = "Disziplin";
 const COL_VORLESUNG = "Vorlesung";
 const COL_SUBGRUPPE = "Subgruppe";
