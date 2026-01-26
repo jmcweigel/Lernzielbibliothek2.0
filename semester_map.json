@@ -1,7 +1,12 @@
 {
-  "Neurologie": 6,
-  "Anatomie": 1,
-  "Radiologie": 7,
-  "Innere Medizin": 5,
-  "Chirurgie": 6
+  "tracks": [
+    { "name": "Vorklinik", "semesters": [1, 2, 3, 4] },
+    { "name": "Klinik", "semesters": [5, 6, 7, 8, 9, 10] }
+  ],
+  "assignments": [
+    { "semester": 1, "disziplin": "Anatomie" },
+    { "semester": 1, "disziplin": "Physiologie" },
+    { "semester": 2, "disziplin": "Anatomie" }
+  ]
 }
+
