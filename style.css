@@ -271,3 +271,58 @@ details:not([open]) summary::after{ content:"▸"; }
 .card:not([open]) > summary::after{
   content:"▸";
 }
+
+/* ---------------- Track-Farben: Vorklinik/Klinik ---------------- */
+
+/* Track-Header (summary) */
+.card[data-track="vorklinik"] > summary.cardHead{
+  background: linear-gradient(135deg, #bbf7d0, #d9f99d) !important; /* pastellgrün */
+}
+.card[data-track="klinik"] > summary.cardHead{
+  background: linear-gradient(135deg, #bae6fd, #bfdbfe) !important; /* pastellblau */
+}
+
+/* Track-Körper dezent einfärben */
+.card[data-track="vorklinik"] .cardBody{
+  background: rgba(16,185,129,0.04);
+}
+.card[data-track="klinik"] .cardBody{
+  background: rgba(59,130,246,0.04);
+}
+
+/* ---------------- Semester-Verläufe ---------------- */
+
+/* Semester-Details (wir stylen das summary) */
+details.semester > summary{
+  border-radius: 14px;
+  margin: 10px 0 0;
+  border: 1px solid rgba(17,24,39,.08);
+}
+
+/* Grünliche Abstufungen Semester 1-4 */
+details.semester[data-sem="1"] > summary{ background: linear-gradient(135deg,#d1fae5,#bbf7d0); }
+details.semester[data-sem="2"] > summary{ background: linear-gradient(135deg,#bbf7d0,#a7f3d0); }
+details.semester[data-sem="3"] > summary{ background: linear-gradient(135deg,#a7f3d0,#86efac); }
+details.semester[data-sem="4"] > summary{ background: linear-gradient(135deg,#86efac,#d9f99d); }
+
+/* Bläuliche Abstufungen Semester 5-10 */
+details.semester[data-sem="5"]  > summary{ background: linear-gradient(135deg,#dbeafe,#bfdbfe); }
+details.semester[data-sem="6"]  > summary{ background: linear-gradient(135deg,#bfdbfe,#bae6fd); }
+details.semester[data-sem="7"]  > summary{ background: linear-gradient(135deg,#bae6fd,#a5f3fc); }
+details.semester[data-sem="8"]  > summary{ background: linear-gradient(135deg,#a5f3fc,#c7d2fe); }
+details.semester[data-sem="9"]  > summary{ background: linear-gradient(135deg,#c7d2fe,#ddd6fe); }
+details.semester[data-sem="10"] > summary{ background: linear-gradient(135deg,#ddd6fe,#bfdbfe); }
+
+/* Semester-Summary Text schöner */
+details.semester > summary{
+  font-weight: 850;
+  color: rgba(17,24,39,.85);
+  padding: 12px 12px;
+  box-shadow: 0 6px 16px rgba(17,24,39,.06);
+}
+
+/* Inhalt etwas eingerückt */
+details.semester[open] > div{
+  padding-top: 8px;
+}
+
