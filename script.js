@@ -14,6 +14,8 @@ const resetDoneBtn = document.getElementById("resetDone");
 
 const STORAGE_KEY = "lernziele_done_v1";
 
+const SEMESTER_MAP_URL = "semester_map.json";
+
 let raw = [];
 let doneMap = loadDoneMap();
 
@@ -27,6 +29,12 @@ async function init(){
   }
 
   raw = await res.json();
+
+  let semesterMap = null;
+try {
+  const m = await fetch(SEMESTER_MAP_URL);
+  if (m.ok) semesterMap = await m.json();
+} catch {}
 
   // Defensive: leere Felder zu String machen
   raw = raw
@@ -83,7 +91,174 @@ function render(){
     tree[d][v][s] ??= [];
     tree[d][v][s].push(r);
   }
+  function renderBySemester(tree, semesterMap) {
+  grid.innerHTML = "";
 
+  // Fallback: wenn keine Map vorhanden ist, wie bisher nach Disziplin rendern
+  if (!semesterMap || !Array.isArray(semesterMap.assignments)) {
+    renderDisciplineList(tree, Object.keys(tree));
+    return;
+  }
+
+  // Index: semester -> [disziplin1, disziplin2, ...] (inkl. Duplikate möglich)
+  const idx = {};
+  for (const a of semesterMap.assignments) {
+    const sem = Number(a.semester);
+    const dis = String(a.disziplin || "").trim();
+    if (!sem || !dis) continue;
+    idx[sem] ??= [];
+    idx[sem].push(dis);
+  }
+
+  const tracks = Array.isArray(semesterMap.tracks) && semesterMap.tracks.length
+    ? semesterMap.tracks
+    : [
+        { name: "Vorklinik", semesters: [1,2,3,4] },
+        { name: "Klinik", semesters: [5,6,7,8,9,10] }
+      ];
+
+  for (const t of tracks) {
+    const trackDetails = document.createElement("details");
+    trackDetails.open = true;
+    trackDetails.className = "card";
+    trackDetails.dataset.key = "T:" + stableHashInt(t.name);
+
+    const sum = document.createElement("summary");
+    sum.className = "cardHead";
+    sum.textContent = t.name;
+    trackDetails.appendChild(sum);
+
+    const body = document.createElement("div");
+    body.className = "cardBody";
+
+    for (const sem of (t.semesters || [])) {
+      const semDetails = document.createElement("details");
+      semDetails.open = false;
+      semDetails.dataset.key = "S:" + stableHashInt(t.name + "||" + sem);
+
+      const semSum = document.createElement("summary");
+      semSum.textContent = `${sem}. Semester`;
+      semDetails.appendChild(semSum);
+
+      const listWrap = document.createElement("div");
+      listWrap.style.padding = "0 0 10px";
+
+      // Disziplinen dieses Semesters – nur die, die es in deinen Daten wirklich gibt
+      const wanted = (idx[sem] || []).filter(d => tree[d]);
+      // Optional: wenn Semester leer gemappt ist, nichts anzeigen
+      if (wanted.length === 0) {
+        const p = document.createElement("div");
+        p.className = "smallmeta";
+        p.style.padding = "0 12px 10px";
+        p.textContent = "Keine Disziplinen zugeordnet.";
+        semDetails.appendChild(p);
+      } else {
+        renderDisciplineList(tree, wanted, listWrap);
+        semDetails.appendChild(listWrap);
+      }
+
+      body.appendChild(semDetails);
+    }
+
+    trackDetails.appendChild(body);
+    grid.appendChild(trackDetails);
+  }
+}
+function renderDisciplineList(tree, disciplineNames, mountEl = null) {
+  const target = mountEl || grid;
+
+  for (const d of disciplineNames) {
+    const card = document.createElement("details");
+    card.className = "card";
+    card.open = false;
+    card.dataset.key = "D:" + stableHashInt(d);
+
+    const color = disciplineColor(d);
+
+    const head = document.createElement("summary");
+    head.className = "cardHead";
+    head.style.background = `linear-gradient(135deg, ${color.bg1}, ${color.bg2})`;
+
+    const titleWrap = document.createElement("div");
+    const h = document.createElement("h2");
+    h.className = "disziplin";
+    h.textContent = d;
+    titleWrap.appendChild(h);
+
+    const badge = document.createElement("div");
+    badge.className = "badge";
+    badge.textContent = `${countLeaf(tree[d])} Lernziele`;
+
+    head.appendChild(titleWrap);
+    head.appendChild(badge);
+
+    const body = document.createElement("div");
+    body.className = "cardBody";
+
+    // Vorlesungen wie bei dir (details + Subgruppe als Titel + Checkboxen)
+    const lectures = Object.keys(tree[d]).sort((a,b)=>a.localeCompare(b,"de"));
+    for (const v of lectures){
+      const det = document.createElement("details");
+      det.open = false; // Vorlesungen zunächst zu
+      det.dataset.key = "V:" + stableHashInt(d + "||" + v);
+
+      const sum = document.createElement("summary");
+      sum.textContent = v;
+      det.appendChild(sum);
+
+      const subgroups = Object.keys(tree[d][v]).sort((a,b)=>a.localeCompare(b,"de"));
+      for (const s of subgroups){
+        const sTitle = document.createElement("div");
+        sTitle.className = "subgroupTitle";
+        sTitle.textContent = s;
+        det.appendChild(sTitle);
+
+        const ul = document.createElement("ul");
+        ul.className = "list";
+
+        for (const r of tree[d][v][s]){
+          const key = makeKey(r);
+          const isDone = !!doneMap[key];
+
+          const li = document.createElement("li");
+          li.className = "item" + (isDone ? " done" : "");
+
+          const cb = document.createElement("input");
+          cb.type = "checkbox";
+          cb.checked = isDone;
+
+          cb.addEventListener("change", () => {
+            doneMap[key] = cb.checked;
+            if (!cb.checked) delete doneMap[key];
+            saveDoneMap(doneMap);
+            li.classList.toggle("done", cb.checked);
+
+            // Wenn "Erledigte ausblenden" aktiv ist, entferne nur das Item (ohne alles einzuklappen)
+            if (hideDoneEl.checked && cb.checked) {
+              li.remove();
+            }
+          });
+
+          const txt = document.createElement("div");
+          txt.className = "lzText";
+          txt.textContent = r.Lernziel;
+
+          li.appendChild(cb);
+          li.appendChild(txt);
+          ul.appendChild(li);
+        }
+
+        det.appendChild(ul);
+      }
+
+      body.appendChild(det);
+    }
+
+    card.appendChild(head);
+    card.appendChild(body);
+    target.appendChild(card);
+  }
+}
   // Stats
   const totalShown = rows.length;
   const totalAll = raw.length;
