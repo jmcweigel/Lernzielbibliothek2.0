@@ -137,6 +137,8 @@ function renderBySemester(tree, semesterMap) {
     trackDetails.open = true;
     trackDetails.className = "card";
     trackDetails.dataset.key = "T:" + stableHashInt(t.name);
+    trackDetails.dataset.track = t.name.toLowerCase().includes("vor") ? "vorklinik" : "klinik";
+
 
     const sum = document.createElement("summary");
     sum.className = "cardHead";
@@ -150,6 +152,9 @@ function renderBySemester(tree, semesterMap) {
       const semDetails = document.createElement("details");
       semDetails.open = false;
       semDetails.dataset.key = "S:" + stableHashInt(t.name + "||" + sem);
+      semDetails.classList.add("semester");
+semDetails.dataset.sem = String(sem);
+
 
       const semSum = document.createElement("summary");
       semSum.textContent = `${sem}. Semester`;
