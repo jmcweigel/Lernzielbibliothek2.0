@@ -392,3 +392,37 @@ details.semester[data-sem="9"]  > summary{ background: linear-gradient(135deg,#c
 details.semester[data-sem="10"] > summary{ background: linear-gradient(135deg,#ddd6fe,#bfdbfe); }
 
 details.semester[open] > div{ padding-top: 8px; }
+
+/* ---------------- Unterschiedliche Fach-Farben auch in der Klinik ---------------- */
+
+.card[data-track="klinik"] details.semester details.card:nth-of-type(8n+1) > summary.cardHead{
+  background: linear-gradient(135deg, #bfdbfe, #ddd6fe) !important;
+}
+
+.card[data-track="klinik"] details.semester details.card:nth-of-type(8n+2) > summary.cardHead{
+  background: linear-gradient(135deg, #bae6fd, #c7d2fe) !important;
+}
+
+.card[data-track="klinik"] details.semester details.card:nth-of-type(8n+3) > summary.cardHead{
+  background: linear-gradient(135deg, #a5f3fc, #bfdbfe) !important;
+}
+
+.card[data-track="klinik"] details.semester details.card:nth-of-type(8n+4) > summary.cardHead{
+  background: linear-gradient(135deg, #c7d2fe, #e9d5ff) !important;
+}
+
+.card[data-track="klinik"] details.semester details.card:nth-of-type(8n+5) > summary.cardHead{
+  background: linear-gradient(135deg, #ddd6fe, #bfdbfe) !important;
+}
+
+.card[data-track="klinik"] details.semester details.card:nth-of-type(8n+6) > summary.cardHead{
+  background: linear-gradient(135deg, #dbeafe, #bae6fd) !important;
+}
+
+.card[data-track="klinik"] details.semester details.card:nth-of-type(8n+7) > summary.cardHead{
+  background: linear-gradient(135deg, #e0f2fe, #c7d2fe) !important;
+}
+
+.card[data-track="klinik"] details.semester details.card:nth-of-type(8n+8) > summary.cardHead{
+  background: linear-gradient(135deg, #bfdbfe, #a5f3fc) !important;
+}
