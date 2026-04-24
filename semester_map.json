@@ -5,8 +5,15 @@
   ],
   "assignments": [
     { "semester": 1, "disziplin": "Anatomie I" },
-    { "semester": 1, "disziplin": "Anatomie I" },
     { "semester": 2, "disziplin": "Anatomie I" }
+    { "semester": 6, "disziplin": "Pädiatrie
+Kursraum Pädiatrische Differentialdiagnose am Krankenbett" }
+    { "semester": 8, "disziplin": "Pädiatrie
+Kursraum Pädiatrische Differentialdiagnose am Krankenbett" }
+    { "semester": 8, "disziplin": "Vorlesung Chirurgie: Herz-Thorax-Chirurgie" }
+    { "semester": 7, "disziplin": "Radiologie Hauptvorlesung" }
+    
+    
   ]
 }
 
