@@ -677,7 +677,35 @@ function disciplineColor(name){
     { bg1:"#99f6e4", bg2:"#bfdbfe" },
     { bg1:"#fca5a5", bg2:"#fde68a" },
     { bg1:"#d9f99d", bg2:"#a7f3d0" },
+
+    { bg1:"#fbcfe8", bg2:"#f9a8d4" },
+    { bg1:"#ddd6fe", bg2:"#c4b5fd" },
+    { bg1:"#bae6fd", bg2:"#7dd3fc" },
+    { bg1:"#a7f3d0", bg2:"#6ee7b7" },
+    { bg1:"#fed7aa", bg2:"#fdba74" },
+    { bg1:"#fecdd3", bg2:"#fda4af" },
+    { bg1:"#fef3c7", bg2:"#fde68a" },
+    { bg1:"#ccfbf1", bg2:"#99f6e4" },
+
+    { bg1:"#e0e7ff", bg2:"#c7d2fe" },
+    { bg1:"#fae8ff", bg2:"#f0abfc" },
+    { bg1:"#dcfce7", bg2:"#bbf7d0" },
+    { bg1:"#e0f2fe", bg2:"#bae6fd" },
+    { bg1:"#fee2e2", bg2:"#fecaca" },
+    { bg1:"#ffedd5", bg2:"#fed7aa" },
+    { bg1:"#fef9c3", bg2:"#fde68a" },
+    { bg1:"#ede9fe", bg2:"#ddd6fe" },
+
+    { bg1:"#cffafe", bg2:"#a5f3fc" },
+    { bg1:"#d1fae5", bg2:"#a7f3d0" },
+    { bg1:"#fce7f3", bg2:"#fbcfe8" },
+    { bg1:"#f3e8ff", bg2:"#e9d5ff" },
+    { bg1:"#dbeafe", bg2:"#bfdbfe" },
+    { bg1:"#ecfccb", bg2:"#d9f99d" },
+    { bg1:"#fff7ed", bg2:"#fed7aa" },
+    { bg1:"#ffe4e6", bg2:"#fecdd3" }
   ];
+
   const idx = stableHashInt(name) % palette.length;
   return palette[idx];
 }
