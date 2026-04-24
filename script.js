@@ -146,12 +146,18 @@ function renderBySemester(tree, semesterMap) {
 
   // Index: semester -> [disziplin,...]
   const idx = {};
+  const mappedDisciplines = new Set();
+
   for (const a of semesterMap.assignments) {
     const sem = Number(a.semester);
     const dis = String(a.disziplin || "").trim();
     if (!sem || !dis) continue;
+
     idx[sem] ??= [];
     idx[sem].push(dis);
+
+    // Merken, welche Disziplinen im Mapping stehen
+    mappedDisciplines.add(dis);
   }
 
   const tracks = Array.isArray(semesterMap.tracks) && semesterMap.tracks.length
@@ -161,6 +167,7 @@ function renderBySemester(tree, semesterMap) {
         { name: "Klinik", semesters: [5,6,7,8,9,10] }
       ];
 
+  // Normale Semesteransicht
   for (const t of tracks) {
     const trackDetails = document.createElement("details");
     trackDetails.open = true;
@@ -171,7 +178,6 @@ function renderBySemester(tree, semesterMap) {
     const sum = document.createElement("summary");
     sum.className = "cardHead";
 
-    // Track Fortschritt
     const trackStats = calcTrackStats(tree, idx, t);
     sum.textContent = `${t.name} · ${trackStats.done}/${trackStats.total} erledigt`;
     trackDetails.appendChild(sum);
@@ -212,6 +218,34 @@ function renderBySemester(tree, semesterMap) {
 
     trackDetails.appendChild(body);
     grid.appendChild(trackDetails);
+  }
+
+  // Zusätzlich: Disziplinen, die NICHT im Mapping stehen
+  const unmappedDisciplines = Object.keys(tree)
+    .filter(d => !mappedDisciplines.has(d))
+    .sort((a,b)=>a.localeCompare(b,"de"));
+
+  if (unmappedDisciplines.length > 0) {
+    const unmappedDetails = document.createElement("details");
+    unmappedDetails.open = true;
+    unmappedDetails.className = "card";
+    unmappedDetails.dataset.key = "UNMAPPED";
+
+    const sum = document.createElement("summary");
+    sum.className = "cardHead";
+
+    const stats = calcSemesterStats(tree, unmappedDisciplines);
+    sum.textContent = `Ohne Semesterzuordnung · ${stats.done}/${stats.total} erledigt`;
+
+    unmappedDetails.appendChild(sum);
+
+    const body = document.createElement("div");
+    body.className = "cardBody";
+
+    renderDisciplineList(tree, unmappedDisciplines, body);
+
+    unmappedDetails.appendChild(body);
+    grid.appendChild(unmappedDetails);
   }
 }
 
