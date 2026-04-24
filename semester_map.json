@@ -4,8 +4,16 @@
     { "name": "Klinik", "semesters": [5, 6, 7, 8, 9, 10] }
   ],
   "assignments": [
-     { "semester": 1, "disziplin": "Anatomie I" },
-    { "semester": 2, "disziplin": "Anatomie I" },
+    { "semester": 1, "disziplin": "Anatomie" },
+    { "semester": 2, "disziplin": "Anatomie" },
+    { "semester": 1, "disziplin": "Anatomie und Zellbiologie" },
+    { "semester": 2, "disziplin": "Anatomie und Zellbiologie" },
+    { "semester": 1, "disziplin": "Anatomie/Histologie" },
+    { "semester": 2, "disziplin": "Anatomie/Histologie" },
+    { "semester": 1, "disziplin": "Immunologie/Histologie" },
+    { "semester": 2, "disziplin": "Immunologie/Histologie" },
+    { "semester": 1, "disziplin": "Histologie" },
+    { "semester": 2, "disziplin": "Histologie" },
     { "semester": 6, "disziplin": "Pädiatrie\nKursraum Pädiatrische Differentialdiagnose am Krankenbett" },
     { "semester": 8, "disziplin": "Pädiatrie\nKursraum Pädiatrische Differentialdiagnose am Krankenbett" },
     { "semester": 8, "disziplin": "Vorlesung Chirurgie: Herz-Thorax-Chirurgie" },
