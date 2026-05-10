@@ -30,6 +30,9 @@ let raw = [];
 let semesterMap = null;
 let stateMap = loadStateMap(); // key -> {done:boolean, star:boolean, repeat:boolean}
 
+// Fachfarbe: pro Fach genau eine feste Farbe
+let disciplineColorMap = new Map(); // normalisierter Fachname -> {bg1,bg2}
+
 init();
 
 async function init(){
