@@ -246,6 +246,48 @@ details:not([open]) summary::after{ content:"▸"; }
   margin-right: auto;
 }
 
+/* ---------------- Outline-Notizen pro Vorlesung ---------------- */
+
+.lectureNoteWrap{
+  margin: 8px 12px 12px;
+  border: 1px solid rgba(17,24,39,.08);
+  border-radius: 14px;
+  background: rgba(255,255,255,.72);
+  box-shadow: none;
+}
+
+.lectureNoteSummary{
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(17,24,39,.72);
+  padding: 10px 12px;
+}
+
+.lectureNoteBox{
+  width: calc(100% - 24px);
+  min-height: 150px;
+  margin: 0 12px 12px;
+  resize: vertical;
+  border: 1px solid rgba(17,24,39,.10);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.55;
+  background: rgba(255,255,255,.88);
+  color: var(--text);
+  outline: none;
+}
+
+.lectureNoteBox:focus{
+  border-color: rgba(59,130,246,.35);
+  box-shadow: 0 0 0 3px rgba(59,130,246,.08);
+}
+
+.lectureNoteBox::placeholder{
+  color: rgba(107,114,128,.78);
+}
+
 /* Lernziel Liste */
 .list{
   margin: 0;
