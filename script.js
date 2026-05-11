@@ -320,15 +320,16 @@ noteWrap.appendChild(noteSummary);
 const noteBox = document.createElement("textarea");
 noteBox.className = "lectureNoteBox";
 noteBox.placeholder =
-`Outline-Notiz zur Vorlesung
+`Notizen strukturieren …
 
-Beispiel:
-- Hauptthema
-  - Unterpunkt
-    - Detail
+- Kerngedanke
+  - Detail
+  - Beispiel
+
 - Prüfungsrelevant
   - ...
-- Unklar / nacharbeiten
+
+- Nacharbeiten
   - ...`;
 
 noteBox.value = getLectureNote(lectureKey);
