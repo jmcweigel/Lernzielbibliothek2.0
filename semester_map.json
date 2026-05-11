@@ -6,18 +6,73 @@
   "assignments": [
     { "semester": 1, "disziplin": "Anatomie" },
     { "semester": 2, "disziplin": "Anatomie" },
-    { "semester": 1, "disziplin": "Anatomie und Zellbiologie" },
-    { "semester": 2, "disziplin": "Anatomie und Zellbiologie" },
     { "semester": 1, "disziplin": "Anatomie/Histologie" },
     { "semester": 2, "disziplin": "Anatomie/Histologie" },
-    { "semester": 1, "disziplin": "Immunologie/Histologie" },
-    { "semester": 2, "disziplin": "Immunologie/Histologie" },
-    { "semester": 1, "disziplin": "Histologie" },
-    { "semester": 2, "disziplin": "Histologie" },
-    { "semester": 6, "disziplin": "Pädiatrie\nKursraum Pädiatrische Differentialdiagnose am Krankenbett" },
-    { "semester": 8, "disziplin": "Pädiatrie\nKursraum Pädiatrische Differentialdiagnose am Krankenbett" },
+    
+    { "semester": 5, "disziplin": "Epidemiologie" },
+    { "semester": 5, "disziplin": "Klinische Chemie" },
+    { "semester": 5, "disziplin": "Mikrobiologie" },
+    { "semester": 5, "disziplin": "Klinische Umweltmedizin" },
+
+    { "semester": 6, "disziplin": "Endokrinologie" },
+    { "semester": 6, "disziplin": "Hepatologie" },
+    { "semester": 6, "disziplin": "Nephrologie" },
+    { "semester": 6, "disziplin": "Hämatologie" },
+    { "semester": 6, "disziplin": "Kardiologie" },
+    { "semester": 6, "disziplin": "Pneumologie" },
+    { "semester": 6, "disziplin": "Gastroenterologie" },
+    
+    { "semester": 6, "disziplin": "Geschichte, Theorie und Ethik der Medizin" },
+    { "semester": 6, "disziplin": "Humangenetik" },
+    { "semester": 6, "disziplin": "Rehabilitation, Physikalische Medizin, Naturheilverfahren" },
+    { "semester": 6, "disziplin": "Pädiatrie" },
+    { "semester": 6, "disziplin": "Gesundheitsökonomie" },
+    { "semester": 6, "disziplin": "Pharmakologie" },
+    { "semester": 6, "disziplin": "Rechtsmedizin" },
+
+    { "semester": 7, "disziplin": "Endokrinologie" },
+    { "semester": 7, "disziplin": "Hepatologie" },
+    { "semester": 7, "disziplin": "Nephrologie" },
+    { "semester": 7, "disziplin": "Hämatologie" },
+    { "semester": 7, "disziplin": "Kardiologie" },
+    { "semester": 7, "disziplin": "Pneumologie" },
+    { "semester": 7, "disziplin": "Gastroenterologie" },
+
+    { "semester": 7, "disziplin": "Rechtsmedizin" },
+
+    { "semester": 7, "disziplin": "Radiologie Hauptvorlesung" },
+    { "semester": 7, "disziplin": "Arbeitsmedizin" },
+    { "semester": 7, "disziplin": "Ophthalmologie" },
+    { "semester": 7, "disziplin": "Hals-Nasen-Ohrenheilkunde" },
+    { "semester": 7, "disziplin": "Dermatologie" },
+    { "semester": 7, "disziplin": "Interdisziplinäres Wissen u. Handeln" },
+    { "semester": 7, "disziplin": "Orthopädie" },
+   
+    
+
+    { "semester": 8, "disziplin": "Pädiatrie" },
+    { "semester": 8, "disziplin": "Dermatologie" },
+    
     { "semester": 8, "disziplin": "Vorlesung Chirurgie: Herz-Thorax-Chirurgie" },
-    { "semester": 7, "disziplin": "Radiologie Hauptvorlesung" }
+    { "semester": 8, "disziplin": "Anästhesie" },
+    { "semester": 8, "disziplin": "Urologie" },
+    { "semester": 8, "disziplin": "Infektiologie" },
+    { "semester": 8, "disziplin": "Rheumatologie / Klinische Immunologie" },
+    { "semester": 8, "disziplin": "D" },
+
+    { "semester": 9, "disziplin": "Anästhesie" },
+    { "semester": 9, "disziplin": "Infektiologie" },
+    { "semester": 9, "disziplin": "Rheumatologie / Klinische Immunologie" },
+
+    { "semester": 9, "disziplin": "Psychiatrie, Psychosomatik und Psychotherapie" },
+    { "semester": 9, "disziplin": "Klinische Pharmakologie" },
+    { "semester": 9, "disziplin": "Gynäkologie" },
+    { "semester": 9, "disziplin": "Allgemeinmedizin" },
+    { "semester": 9, "disziplin": "Palliativmedizin" },
+    { "semester": 9, "disziplin": "Geriatrie" },
+    
+    
+    
     
     
   ]
