@@ -352,6 +352,8 @@ details:not([open]) summary::after{ content:"▸"; }
   box-shadow: none;
 }
 
+
+
 /* ---------------- Track-Farben: Vorklinik/Klinik ---------------- */
 .card[data-track="vorklinik"] > summary.cardHead{
   background: linear-gradient(135deg, #bbf7d0, #d9f99d) !important;
@@ -364,6 +366,32 @@ details:not([open]) summary::after{ content:"▸"; }
 }
 .card[data-track="klinik"] .cardBody{
   background: rgba(59,130,246,0.04);
+}
+.spotRight{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.spotClose{
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(17,24,39,.10);
+  background: rgba(255,255,255,.80);
+  color: rgba(17,24,39,.65);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: 0 2px 8px rgba(17,24,39,.05);
+}
+
+.spotClose:hover{
+  background: rgba(239,68,68,.08);
+  color: rgba(127,29,29,.85);
 }
 
 /* ---------------- Semester-Verläufe ---------------- */
