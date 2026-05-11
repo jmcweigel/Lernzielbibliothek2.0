@@ -62,6 +62,8 @@ async function init(){
     }))
     .filter(r => r.Lernziel.length > 0);
 
+  buildDisciplineColorMap(raw);
+
   // UI Events
   searchEl.addEventListener("input", render);
   onlyOpenEl.addEventListener("change", render);
@@ -460,11 +462,20 @@ function showSpotlight(row, message=null) {
     spotlightEl.classList.remove("hidden");
     spotlightEl.innerHTML = `
       <div class="spotTop">
-        <div class="spotTitle">Hinweis</div>
-        <div class="spotMeta"></div>
+        <div>
+          <div class="spotTitle">Hinweis</div>
+          <div class="spotMeta"></div>
+        </div>
+        <button class="spotClose" type="button" id="spotClose" title="Schließen">×</button>
       </div>
       <div class="spotBody">${escapeHtml(message)}</div>
     `;
+
+    document.getElementById("spotClose").onclick = () => {
+      spotlightEl.classList.add("hidden");
+      spotlightEl.innerHTML = "";
+    };
+
     return;
   }
 
@@ -484,9 +495,15 @@ function showSpotlight(row, message=null) {
         <div class="spotTitle">Fokus-Lernziel</div>
         <div class="spotMeta">${escapeHtml(row.Disziplin)} · ${escapeHtml(row.Vorlesung)} · ${escapeHtml(row.Subgruppe)}</div>
       </div>
-      <div class="spotMeta">${st.done ? "✔ erledigt" : "offen"} ${st.star ? " · ★" : ""} ${st.repeat ? " · 🔁" : ""}</div>
+
+      <div class="spotRight">
+        <div class="spotMeta">${st.done ? "✔ erledigt" : "offen"} ${st.star ? " · ★" : ""} ${st.repeat ? " · 🔁" : ""}</div>
+        <button class="spotClose" type="button" id="spotClose" title="Schließen">×</button>
+      </div>
     </div>
+
     <div class="spotBody">${escapeHtml(row.Lernziel)}</div>
+
     <div class="spotBtns">
       <button class="btn" type="button" id="spotJump">In Liste anzeigen</button>
       <button class="btn" type="button" id="spotToggleDone">${st.done ? "Als offen markieren" : "Als erledigt markieren"}</button>
@@ -495,7 +512,13 @@ function showSpotlight(row, message=null) {
     </div>
   `;
 
+  document.getElementById("spotClose").onclick = () => {
+    spotlightEl.classList.add("hidden");
+    spotlightEl.innerHTML = "";
+  };
+
   document.getElementById("spotJump").onclick = () => jumpToKey(key);
+
   document.getElementById("spotToggleDone").onclick = () => {
     const now = getState(key);
     now.done = !now.done;
@@ -504,6 +527,7 @@ function showSpotlight(row, message=null) {
     render();
     showSpotlight(row);
   };
+
   document.getElementById("spotToggleStar").onclick = () => {
     const now = getState(key);
     now.star = !now.star;
@@ -512,6 +536,7 @@ function showSpotlight(row, message=null) {
     render();
     showSpotlight(row);
   };
+
   document.getElementById("spotToggleRepeat").onclick = () => {
     const now = getState(key);
     now.repeat = !now.repeat;
@@ -670,10 +695,13 @@ function makeKey(r){
   return stableHash(`${r.Disziplin}||${r.Vorlesung}||${r.Subgruppe}||${r.Lernziel}`);
 }
 
-function disciplineColor(name){
-  // Optional: feste Farben für bestimmte Fächer
-  // Neue Fächer aus OpenSheet funktionieren trotzdem automatisch,
-  // auch wenn sie hier NICHT eingetragen sind.
+function normalizeDisciplineName(name){
+  return String(name || "").replace(/\s+/g, " ").trim();
+}
+
+function buildDisciplineColorMap(rows){
+  disciplineColorMap = new Map();
+
   const fixedColors = {
     "Anatomie I": { bg1:"#d1fae5", bg2:"#a7f3d0" },
     "Pädiatrie Kursraum Pädiatrische Differentialdiagnose am Krankenbett": { bg1:"#fde68a", bg2:"#fbcfe8" },
@@ -681,16 +709,49 @@ function disciplineColor(name){
     "Vorlesung Chirurgie: Herz-Thorax-Chirurgie": { bg1:"#fecaca", bg2:"#fed7aa" }
   };
 
-  // Macht Namen robuster:
-  // Zeilenumbrüche, Tabs und mehrere Leerzeichen werden zu einem Leerzeichen.
-  const normalized = String(name).replace(/\s+/g, " ").trim();
+  const usedColors = new Set();
 
-  if (fixedColors[normalized]) {
-    return fixedColors[normalized];
+  const disciplineNames = [...new Set(
+    rows
+      .map(r => normalizeDisciplineName(r.Disziplin || "Ohne Disziplin"))
+      .filter(Boolean)
+  )].sort((a,b)=>a.localeCompare(b,"de"));
+
+  // 1) feste Wunschfarben zuerst vergeben
+  for (const name of disciplineNames) {
+    if (fixedColors[name]) {
+      const c = fixedColors[name];
+      const sig = `${c.bg1}|${c.bg2}`;
+
+      if (!usedColors.has(sig)) {
+        disciplineColorMap.set(name, c);
+        usedColors.add(sig);
+      }
+    }
   }
 
-  // Große automatische Pastellpalette für alle zukünftigen Fächer
-  const fallbackPalette = [
+  // 2) alle übrigen Fächer bekommen jeweils eine noch nicht verwendete Farbe
+  let colorIndex = 0;
+
+  for (const name of disciplineNames) {
+    if (disciplineColorMap.has(name)) continue;
+
+    let color = null;
+    let sig = "";
+
+    do {
+      color = getDisciplineColorByIndex(colorIndex);
+      sig = `${color.bg1}|${color.bg2}`;
+      colorIndex++;
+    } while (usedColors.has(sig));
+
+    disciplineColorMap.set(name, color);
+    usedColors.add(sig);
+  }
+}
+
+function getDisciplineColorByIndex(index){
+  const palette = [
     { bg1:"#fde68a", bg2:"#fbcfe8" },
     { bg1:"#bfdbfe", bg2:"#ddd6fe" },
     { bg1:"#bbf7d0", bg2:"#bae6fd" },
@@ -722,12 +783,45 @@ function disciplineColor(name){
     { bg1:"#dbeafe", bg2:"#bfdbfe" },
     { bg1:"#ecfccb", bg2:"#d9f99d" },
     { bg1:"#fff7ed", bg2:"#fed7aa" },
-    { bg1:"#ffe4e6", bg2:"#fecdd3" }
+    { bg1:"#ffe4e6", bg2:"#fecdd3" },
+
+    { bg1:"#e0f2fe", bg2:"#c4b5fd" },
+    { bg1:"#fef3c7", bg2:"#a7f3d0" },
+    { bg1:"#fae8ff", bg2:"#fecdd3" },
+    { bg1:"#dbeafe", bg2:"#ccfbf1" },
+    { bg1:"#ede9fe", bg2:"#fbcfe8" },
+    { bg1:"#dcfce7", bg2:"#fde68a" },
+    { bg1:"#fee2e2", bg2:"#fef3c7" },
+    { bg1:"#cffafe", bg2:"#ddd6fe" },
+    { bg1:"#fce7f3", bg2:"#fed7aa" },
+    { bg1:"#ecfccb", bg2:"#bae6fd" },
+    { bg1:"#ffedd5", bg2:"#fecdd3" },
+    { bg1:"#d1fae5", bg2:"#bfdbfe" },
+    { bg1:"#f3e8ff", bg2:"#fef9c3" },
+    { bg1:"#ccfbf1", bg2:"#c7d2fe" },
+    { bg1:"#ffe4e6", bg2:"#fde68a" },
+    { bg1:"#e0e7ff", bg2:"#a7f3d0" }
   ];
 
-  const idx = stableHashInt(normalized) % fallbackPalette.length;
-  return fallbackPalette[idx];
+  if (index < palette.length) {
+    return palette[index];
+  }
+
+  // Falls irgendwann mehr Fächer als feste Palette vorhanden sind:
+  // automatisch weitere Pastellfarben erzeugen
+  const hue1 = (index * 47) % 360;
+  const hue2 = (hue1 + 34) % 360;
+
+  return {
+    bg1: `hsl(${hue1}, 85%, 88%)`,
+    bg2: `hsl(${hue2}, 85%, 84%)`
+  };
 }
+
+function disciplineColor(name){
+  const normalized = normalizeDisciplineName(name);
+  return disciplineColorMap.get(normalized) || getDisciplineColorByIndex(0);
+}  
 
 function stableHash(str){
   let h = 5381;
